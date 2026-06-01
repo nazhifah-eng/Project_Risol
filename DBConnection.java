@@ -2,30 +2,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import javax.swing.JOptionPane;
 
-/**
- * DBConnection.java
- * Singleton helper — satu koneksi dipakai semua form.
- *
- * Larisole Malang — Sistem Kasir
- */
 public class DBConnection {
-
     private static Connection conn = null;
 
-    // ── Sesuaikan tiga baris ini ──────────────────────────────
     private static final String HOST = "localhost";
     private static final String PORT = "1433";
     private static final String DB   = "kasir_larisole";
     private static final String USER = "sa";
     private static final String PASS = "123";
-    // ─────────────────────────────────────────────────────────
 
     private DBConnection() {}
 
-    /**
-     * Buka koneksi baru dan simpan sebagai singleton.
-     * Panggil dari tombol "Koneksi".
-     */
     public static Connection connect() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -46,12 +33,10 @@ public class DBConnection {
         return conn;
     }
 
-    /** Ambil koneksi yang sudah dibuka. */
     public static Connection getConnection() {
         return conn;
     }
 
-    /** Tutup koneksi. */
     public static void disconnect() {
         try {
             if (conn != null && !conn.isClosed()) {
@@ -61,7 +46,6 @@ public class DBConnection {
         conn = null;
     }
 
-    /** Cek apakah sudah terkoneksi. */
     public static boolean isConnected() {
         try {
             return conn != null && !conn.isClosed();
