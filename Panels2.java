@@ -14,11 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
-// ============================================================
-//  ProdukPanel - Manajemen data produk
-//  Fitur: Tampilkan daftar, Tambah, Edit, Hapus (soft-delete)
-//         Cari produk, Filter kategori
-// ============================================================
+
 class ProdukPanel extends JPanel {
     private User currentUser;
     private JTable table;
@@ -116,7 +112,6 @@ class ProdukPanel extends JPanel {
         table.getTableHeader().setForeground(AppTheme.ACCENT_ORANGE);
         table.getTableHeader().setFont(AppTheme.FONT_SUBTITLE);
 
-        // Renderer warna stok rendah
         table.getColumnModel().getColumn(4).setCellRenderer(new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable t, Object v,
                     boolean sel, boolean foc, int r, int c) {
@@ -130,7 +125,6 @@ class ProdukPanel extends JPanel {
             }
         });
 
-        // Renderer kolom status
         table.getColumnModel().getColumn(6).setCellRenderer(new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable t, Object v,
                     boolean sel, boolean foc, int r, int c) {
@@ -141,7 +135,6 @@ class ProdukPanel extends JPanel {
             }
         });
 
-        // Double click untuk edit
         table.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && currentUser.isOwner()) {
@@ -314,11 +307,6 @@ class ProdukPanel extends JPanel {
     private void showError(String m)   { JOptionPane.showMessageDialog(this,m,"Error",JOptionPane.ERROR_MESSAGE); }
 }
 
-// ============================================================
-//  DaftarTransaksiPanel - Riwayat semua transaksi
-//  Fitur: Filter tanggal, Cari, Lihat detail, Update status,
-//         Batalkan transaksi, Export CSV
-// ============================================================
 class DaftarTransaksiPanel extends JPanel {
     private User currentUser;
     private JTable table;
@@ -405,7 +393,6 @@ class DaftarTransaksiPanel extends JPanel {
         table.getTableHeader().setForeground(AppTheme.ACCENT_ORANGE);
         table.getTableHeader().setFont(AppTheme.FONT_SUBTITLE);
 
-        // Warna status
         table.getColumnModel().getColumn(8).setCellRenderer(new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable t, Object v,
                     boolean sel, boolean foc, int r, int c) {
@@ -414,7 +401,7 @@ class DaftarTransaksiPanel extends JPanel {
                 return lbl;
             }
         });
-        // Warna metode bayar
+      
         table.getColumnModel().getColumn(7).setCellRenderer(new DefaultTableCellRenderer() {
             @Override public Component getTableCellRendererComponent(JTable t, Object v,
                     boolean sel, boolean foc, int r, int c) {
@@ -516,9 +503,6 @@ class DaftarTransaksiPanel extends JPanel {
     }
 }
 
-// ============================================================
-//  DetailTransaksiDialog - Dialog popup detail 1 transaksi
-// ============================================================
 class DetailTransaksiDialog extends JDialog {
     private final int transaksiId;
     private final TransaksiDAO dao;
@@ -585,10 +569,6 @@ class DetailTransaksiDialog extends JDialog {
     }
 }
 
-// ============================================================
-//  StrukDialog - Tampilan dan cetak struk thermal
-//  Fitur: Preview struk, tombol cetak ke printer
-// ============================================================
 class StrukDialog extends JDialog {
     private Transaksi transaksi;
     private List<ItemKeranjang> keranjang;
@@ -740,10 +720,6 @@ class StrukDialog extends JDialog {
     }
 }
 
-// ============================================================
-//  LaporanPanel - Laporan penjualan dan statistik
-//  Fitur: Ringkasan harian, produk terlaris, grafik omzet
-// ============================================================
 class LaporanPanel extends JPanel {
     private final TransaksiDAO transaksiDAO = new TransaksiDAO();
     private final NumberFormat CURRENCY = NumberFormat.getInstance(new Locale("id","ID"));
@@ -839,9 +815,6 @@ class LaporanPanel extends JPanel {
     }
 }
 
-// ============================================================
-//  PelangganPanel - Stub panel pelanggan tetap
-// ============================================================
 class PelangganPanel extends JPanel {
     public PelangganPanel() {
         setOpaque(false);
@@ -853,10 +826,6 @@ class PelangganPanel extends JPanel {
     }
 }
 
-// ============================================================
-//  PengaturanPanel - Konfigurasi sistem dan manajemen user
-//  Fitur: Edit info toko, ganti password, manajemen akun
-// ============================================================
 class PengaturanPanel extends JPanel {
     private User currentUser;
     private final PengaturanDAO dao = new PengaturanDAO();
