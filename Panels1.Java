@@ -1,6 +1,9 @@
+package ui;
+
 import dao.*;
 import model.*;
 import util.*;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import java.awt.*;

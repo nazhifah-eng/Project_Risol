@@ -1,5 +1,3 @@
-package ui;
-
 import dao.*;
 import model.*;
 import util.*;
