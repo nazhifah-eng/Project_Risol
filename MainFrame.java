@@ -8,18 +8,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-/**
- * MainFrame — Jendela utama aplikasi setelah login berhasil.
- *
- * FUNGSI:
- *  - buildHeader()       : header atas (logo, omzet, jam, info user, tombol logout)
- *  - buildSidebar()      : navigasi kiri (Transaksi, Daftar Trx, Produk, dst.)
- *  - navigateTo(name)    : ganti panel konten sesuai menu diklik
- *  - showPanel(panel)    : render panel ke area konten tengah
- *  - startClock()        : timer 1 detik untuk jam, 30 detik untuk update statistik
- *  - updateHeaderStats() : ambil omzet & jumlah transaksi dari DB (background thread)
- *  - konfirmasiLogout()  : dialog konfirmasi sebelum kembali ke LoginFrame
- */
 public class MainFrame extends JFrame {
 
     private User    currentUser;
@@ -42,7 +30,6 @@ public class MainFrame extends JFrame {
         showPanel(new TransaksiPanel(currentUser));
     }
 
-    // ── INISIALISASI JENDELA ──────────────────────────────────────
     private void initComponents() {
         setTitle("Larisole POS — " + currentUser.getNamaLengkap());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -61,7 +48,6 @@ public class MainFrame extends JFrame {
         add(contentArea, BorderLayout.CENTER);
     }
 
-    // ── HEADER ────────────────────────────────────────────────────
     private JPanel buildHeader() {
         JPanel header = new JPanel(new BorderLayout()) {
             @Override
@@ -79,7 +65,6 @@ public class MainFrame extends JFrame {
         header.setOpaque(false);
         header.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
 
-        // Logo kiri
         JPanel logoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         logoPanel.setOpaque(false);
         JLabel logoIcon = new JLabel("🥐");
@@ -90,7 +75,6 @@ public class MainFrame extends JFrame {
         logoPanel.add(logoIcon);
         logoPanel.add(logoText);
 
-        // Statistik tengah (Omzet | Transaksi | Jam)
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 24, 0));
         infoPanel.setOpaque(false);
 
@@ -104,7 +88,6 @@ public class MainFrame extends JFrame {
         infoPanel.add(makeSep());
         infoPanel.add(lblJam.getParent());
 
-        // Info & tombol user di kanan
         JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         userPanel.setOpaque(false);
 
@@ -139,7 +122,6 @@ public class MainFrame extends JFrame {
         return header;
     }
 
-    /** Membuat widget dua baris (label kecil + nilai) untuk header statistik */
     private JLabel makeHeaderStat(String label, String value) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -157,7 +139,7 @@ public class MainFrame extends JFrame {
 
         panel.add(lbl);
         panel.add(val);
-        return val; // return label nilai agar bisa di-update
+        return val;
     }
 
     /** Garis pemisah vertikal di header */
@@ -168,7 +150,6 @@ public class MainFrame extends JFrame {
         return sep;
     }
 
-    // ── SIDEBAR ───────────────────────────────────────────────────
     private JPanel buildSidebar() {
         JPanel sidebar = new JPanel() {
             @Override
@@ -186,7 +167,6 @@ public class MainFrame extends JFrame {
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBorder(BorderFactory.createEmptyBorder(12, 0, 12, 0));
 
-        // Format: {icon, label, tooltip}
         String[][] menus = {
             {"🛒", "Transaksi",  "Buat transaksi baru"},
             {"📋", "Daftar Trx", "Riwayat semua transaksi"},
@@ -227,7 +207,6 @@ public class MainFrame extends JFrame {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                     RenderingHints.VALUE_ANTIALIAS_ON);
                 if (isSelected()) {
-                    // Latar oranye transparan + bar kiri
                     g2.setColor(new Color(255, 120, 40, 30));
                     g2.fillRoundRect(8, 2, getWidth() - 16, getHeight() - 4, 8, 8);
                     g2.setColor(AppTheme.ACCENT_ORANGE);
@@ -236,7 +215,6 @@ public class MainFrame extends JFrame {
                     g2.setColor(new Color(255, 255, 255, 8));
                     g2.fillRoundRect(8, 2, getWidth() - 16, getHeight() - 4, 8, 8);
                 }
-                // Gambar icon emoji
                 g2.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 17));
                 g2.setColor(isSelected() ? AppTheme.ACCENT_ORANGE : AppTheme.TEXT_SECONDARY);
                 g2.drawString(icon, 20, getHeight() / 2 + 6);
@@ -257,43 +235,38 @@ public class MainFrame extends JFrame {
         return btn;
     }
 
-    // ── NAVIGASI ──────────────────────────────────────────────────
-    /**
-     * Mengganti panel konten sesuai menu yang diklik.
-     * Setiap klik membuat instance panel baru (fresh data).
-     */
     private void navigateTo(String name) {
         JPanel panel;
         switch (name) {
-            case "Transaksi":  panel = new TransaksiPanel(currentUser);      break;
-            case "Daftar Trx": panel = new DaftarTransaksiPanel(currentUser);break;
-            case "Produk":     panel = new ProdukPanel(currentUser);         break;
-            case "Pelanggan":  panel = new PelangganPanel();                 break;
-            case "Laporan":    panel = new LaporanPanel();                   break;
-            case "Pengaturan": panel = new PengaturanPanel(currentUser);     break;
+            case "Transaksi":  panel = new TransaksiPanel(currentUser);      
+            break;
+            case "Daftar Trx": panel = new DaftarTransaksiPanel(currentUser);
+            break;
+            case "Produk":     panel = new ProdukPanel(currentUser);         
+            break;
+            case "Pelanggan":  panel = new PelangganPanel();                 
+            break;
+            case "Laporan":    panel = new LaporanPanel();                   
+            break;
+            case "Pengaturan": panel = new PengaturanPanel(currentUser);     
+            break;
             default:           panel = new TransaksiPanel(currentUser);
         }
         showPanel(panel);
         updateHeaderStats();
     }
 
-    /** Menampilkan panel di area konten tengah */
     public void showPanel(JPanel panel) {
         contentArea.removeAll();
         contentArea.add(panel, BorderLayout.CENTER);
         contentArea.revalidate();
         contentArea.repaint();
     }
-
-    // ── CLOCK & STATS ─────────────────────────────────────────────
     private void startClock() {
-        // Update jam setiap 1 detik
         new Timer(1000, e -> lblJam.setText(getCurrentTime())).start();
-        // Update statistik setiap 30 detik
         new Timer(30000, e -> updateHeaderStats()).start();
     }
 
-    /** Mengambil data omzet & jumlah transaksi di background thread */
     private void updateHeaderStats() {
         new SwingWorker<Void, Void>() {
             @Override
@@ -314,8 +287,6 @@ public class MainFrame extends JFrame {
     private String getCurrentTime() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
     }
-
-    /** Konfirmasi logout, tutup koneksi DB, buka kembali LoginFrame */
     private void konfirmasiLogout() {
         int opt = JOptionPane.showConfirmDialog(this,
             "Yakin ingin keluar dari sistem?", "Konfirmasi Logout",
