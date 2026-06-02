@@ -9,7 +9,6 @@ public class ProdukDAO {
         return DatabaseConnection.getInstance().getConnection();
     }
 
-
     public List<KategoriProduk> getAllKategori() {
         List<KategoriProduk> list = new ArrayList<>();
         String sql = "SELECT id, nama, aktif FROM KategoriProduk WHERE aktif = 1 ORDER BY nama";
