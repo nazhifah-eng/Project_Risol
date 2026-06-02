@@ -12,10 +12,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
-// ============================================================
-//  LoginFrame - Layar login sebelum masuk ke sistem
-//  Fitur: Verifikasi username+password, animasi shake jika salah
-// ============================================================
 class LoginFrame extends JFrame {
     private JTextField txtUser;
     private JPasswordField txtPass;
@@ -63,7 +59,6 @@ class LoginFrame extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0; gbc.gridy = 0; gbc.gridwidth = 1;
 
-        // Logo + judul
         JLabel logo = new JLabel("🥐", SwingConstants.CENTER);
         logo.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
         gbc.insets = new Insets(24, 0, 4, 0);
@@ -121,7 +116,6 @@ class LoginFrame extends JFrame {
         btnLogin.setPreferredSize(new Dimension(280, 42));
         card.add(btnLogin, gbc);
 
-        // Enter key support
         txtPass.addKeyListener(new KeyAdapter() {
             @Override public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) doLogin();
@@ -132,7 +126,6 @@ class LoginFrame extends JFrame {
         center.add(card);
         add(center, BorderLayout.CENTER);
 
-        // Footer
         JLabel footer = new JLabel("© 2026 Larisole Malang", SwingConstants.CENTER);
         footer.setFont(AppTheme.FONT_SMALL);
         footer.setForeground(AppTheme.TEXT_MUTED);
@@ -163,7 +156,6 @@ class LoginFrame extends JFrame {
         }
     }
 
-    /** Animasi shake saat login gagal */
     private void shakeWindow() {
         Point original = getLocation();
         Timer timer = new Timer(40, null);
@@ -178,17 +170,12 @@ class LoginFrame extends JFrame {
     }
 }
 
-// ============================================================
-//  TransaksiPanel - Panel utama untuk membuat transaksi baru
-//  Fitur: Pilih produk, tambah/hapus item, hitung total,
-//         proses pembayaran, cetak struk
-// ============================================================
+
 class TransaksiPanel extends JPanel {
     private User currentUser;
     private List<ItemKeranjang> keranjang = new ArrayList<>();
     private List<Produk> semuaProduk = new ArrayList<>();
 
-    // Komponen kiri (form input)
     private JTextField txtCustomer, txtDibayar;
     private JComboBox<Produk> cmbProduk;
     private JSpinner spnQty;
@@ -197,11 +184,9 @@ class TransaksiPanel extends JPanel {
     private JLabel lblDiskon, lblTotal, lblKembalian;
     private JTextField txtDiskon;
 
-    // Tabel keranjang kanan
     private JTable tblKeranjang;
     private DefaultTableModel tblModel;
 
-    // Tabel riwayat bawah kanan
     private JTable tblRiwayat;
     private DefaultTableModel riwayatModel;
 
@@ -234,19 +219,14 @@ class TransaksiPanel extends JPanel {
         add(buildRightPanel(), BorderLayout.CENTER);
     }
 
-    // ── PANEL KIRI: Form transaksi ─────────────────────────────
     private JPanel buildFormPanel() {
         JPanel panel = new JPanel(new BorderLayout(0, 10));
         panel.setOpaque(false);
         panel.setPreferredSize(new Dimension(310, 0));
 
-        // Info transaksi card
         JPanel infoCard = buildInfoCard();
-        // Item input card
         JPanel itemCard = buildItemInputCard();
-        // Summary card
         JPanel summaryCard = buildSummaryCard();
-        // Action buttons
         JPanel btnPanel = buildActionButtons();
 
         JPanel top = new JPanel(new GridLayout(0, 1, 0, 8));
@@ -353,7 +333,6 @@ class TransaksiPanel extends JPanel {
         addFormRow(card, "Dibayar",    txtDibayar);
         addFormRow(card, "Kembalian",  lblKembalian);
 
-        // Update kembalian saat input berubah
         txtDibayar.addKeyListener(new KeyAdapter() {
             @Override public void keyReleased(KeyEvent e) { hitungKembalian(); }
         });
@@ -391,18 +370,15 @@ class TransaksiPanel extends JPanel {
         return panel;
     }
 
-    // ── PANEL KANAN ────────────────────────────────────────────
     private JPanel buildRightPanel() {
         JPanel panel = new JPanel(new BorderLayout(0, 12));
         panel.setOpaque(false);
 
-        // Header kanan
         JLabel hdr = new JLabel("🛒 Item dalam transaksi ini");
         hdr.setFont(AppTheme.FONT_SUBTITLE);
         hdr.setForeground(AppTheme.TEXT_PRIMARY);
         hdr.setBorder(BorderFactory.createEmptyBorder(0,0,6,0));
 
-        // Tabel keranjang
         String[] cols = {"#","Nama Produk","Qty","Harga","Subtotal"};
         tblModel = new DefaultTableModel(cols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -416,7 +392,6 @@ class TransaksiPanel extends JPanel {
         JScrollPane spKeranjang = styledScroll(tblKeranjang);
         spKeranjang.setPreferredSize(new Dimension(0, 220));
 
-        // Tabel riwayat hari ini
         JLabel hdrRiwayat = new JLabel("📋 Riwayat transaksi hari ini");
         hdrRiwayat.setFont(AppTheme.FONT_SUBTITLE);
         hdrRiwayat.setForeground(AppTheme.TEXT_PRIMARY);
@@ -427,7 +402,6 @@ class TransaksiPanel extends JPanel {
             @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         tblRiwayat = buildStyledTable(riwayatModel);
-        // Renderer warna status
         tblRiwayat.getColumnModel().getColumn(5).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable t, Object v,
@@ -460,7 +434,6 @@ class TransaksiPanel extends JPanel {
         return panel;
     }
 
-    // ── OPERASI KERANJANG ─────────────────────────────────────
     private void tambahItem() {
         Produk p = (Produk) cmbProduk.getSelectedItem();
         if (p == null) return;
@@ -469,7 +442,6 @@ class TransaksiPanel extends JPanel {
             showWarning("Stok tidak cukup! Stok tersedia: " + p.getStok());
             return;
         }
-        // Cek apakah sudah ada di keranjang
         for (ItemKeranjang item : keranjang) {
             if (item.getProdukId() == p.getId()) {
                 item.setQty(item.getQty() + qty);
@@ -539,7 +511,6 @@ class TransaksiPanel extends JPanel {
         } catch (Exception ignored) {}
     }
 
-    // ── PROSES TRANSAKSI ──────────────────────────────────────
     private void prosesTransaksi(String status) {
         if (keranjang.isEmpty()) { showWarning("Keranjang masih kosong!"); return; }
 
@@ -583,7 +554,6 @@ class TransaksiPanel extends JPanel {
     }
 
     private void cetakStrukOtomatis(Transaksi trx) {
-        // Tampilkan dialog struk
         cetakStruk(trx);
     }
 
@@ -647,7 +617,6 @@ class TransaksiPanel extends JPanel {
         worker.execute();
     }
 
-    // ── HELPERS ───────────────────────────────────────────────
     private JLabel makeValueLabel(String text) {
         JLabel lbl = new JLabel(text);
         lbl.setFont(AppTheme.FONT_MONO);
