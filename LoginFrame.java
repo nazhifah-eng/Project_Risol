@@ -20,7 +20,6 @@ public class LoginFrame extends JFrame {
     }
 
     private void initComponents() {
-        // Panel utama dengan background gelap
         JPanel mainPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -171,7 +170,7 @@ public class LoginFrame extends JFrame {
         try (PreparedStatement ps = DatabaseConnection.getInstance()
                                         .getConnection().prepareStatement(sql)) {
             ps.setString(1, username);
-            ps.setString(2, password); // idealnya hash (BCrypt) di produksi
+            ps.setString(2, password);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new User(
