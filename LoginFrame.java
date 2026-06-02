@@ -33,7 +33,6 @@ public class LoginFrame extends JFrame {
         mainPanel.setLayout(new GridBagLayout());
         mainPanel.setOpaque(true);
 
-        // Card tengah
         JPanel card = AppTheme.makeCard(16);
         card.setLayout(new GridBagLayout());
         card.setPreferredSize(new Dimension(340, 400));
@@ -43,7 +42,6 @@ public class LoginFrame extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
 
-        // ── Logo / Judul
         JLabel lblTitle = new JLabel("LARISOLE", SwingConstants.CENTER);
         lblTitle.setFont(AppTheme.FONT_HUGE);
         lblTitle.setForeground(AppTheme.ACCENT_ORANGE);
@@ -58,7 +56,6 @@ public class LoginFrame extends JFrame {
         gbc.insets = new Insets(0, 20, 20, 20);
         card.add(lblSub, gbc);
 
-        // ── Username
         JLabel lblUser = AppTheme.makeLabel("Username");
         gbc.gridy = 2;
         gbc.insets = new Insets(8, 20, 2, 20);
@@ -69,7 +66,6 @@ public class LoginFrame extends JFrame {
         gbc.insets = new Insets(0, 20, 8, 20);
         card.add(txtUsername, gbc);
 
-        // ── Password
         JLabel lblPass = AppTheme.makeLabel("Password");
         gbc.gridy = 4;
         gbc.insets = new Insets(8, 20, 2, 20);
@@ -88,7 +84,6 @@ public class LoginFrame extends JFrame {
         gbc.insets = new Insets(0, 20, 16, 20);
         card.add(txtPassword, gbc);
 
-        // ── Status label
         lblStatus = new JLabel(" ", SwingConstants.CENTER);
         lblStatus.setFont(AppTheme.FONT_SMALL);
         lblStatus.setForeground(AppTheme.ACCENT_RED);
@@ -96,7 +91,6 @@ public class LoginFrame extends JFrame {
         gbc.insets = new Insets(0, 20, 8, 20);
         card.add(lblStatus, gbc);
 
-        // ── Tombol Login
         btnLogin = AppTheme.makeButton("Login", AppTheme.ACCENT_ORANGE);
         btnLogin.setPreferredSize(new Dimension(280, 42));
         gbc.gridy = 7;
@@ -106,12 +100,10 @@ public class LoginFrame extends JFrame {
         mainPanel.add(card);
         setContentPane(mainPanel);
 
-        // ── Action
         btnLogin.addActionListener(e -> doLogin());
         txtPassword.addActionListener(e -> doLogin());
         txtUsername.addActionListener(e -> txtPassword.requestFocus());
 
-        // ── Fokus awal
         SwingUtilities.invokeLater(() -> txtUsername.requestFocus());
     }
 
