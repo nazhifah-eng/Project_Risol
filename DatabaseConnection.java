@@ -7,9 +7,9 @@ public class DatabaseConnection {
     private Connection connection;
     private String host     = "localhost";
     private String port     = "1433";
-    private String database = "LarisoleDB";
+    private String database = "RisolKasir";
     private String username = "sa";
-    private String password = "YourPassword123";
+    private String password = "123";
 
     private DatabaseConnection() {
         loadProperties();
