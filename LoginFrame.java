@@ -4,28 +4,28 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 
-public class LoginFrame extends JFrame {
+public class LoginFrame extends JFrame{
     private JTextField     txtUsername;
     private JPasswordField txtPassword;
     private JButton        btnLogin;
     private JLabel         lblStatus;
 
-    public LoginFrame() {
+    public LoginFrame(){
         setTitle("Larisole — Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(420, 520);
         setLocationRelativeTo(null);
         setResizable(false);
 
-        // Koneksi ke database dilakukan saat app pertama dibuka
         initDB();
         initComponents();
     }
 
-    private void initDB() {
-        try {
+    private void initDB(){
+        try{
             DatabaseConnection.getInstance();
-        } catch (RuntimeException e) {
+
+        }catch (RuntimeException e){
             JOptionPane.showMessageDialog(
                 null,
                 "Tidak dapat terhubung ke database.\nPastikan SQL Server sudah berjalan.\n\n" + e.getMessage(),
@@ -36,10 +36,10 @@ public class LoginFrame extends JFrame {
         }
     }
 
-    private void initComponents() {
-        JPanel mainPanel = new JPanel() {
+    private void initComponents(){
+        JPanel mainPanel = new JPanel(){
             @Override
-            protected void paintComponent(Graphics g) {
+            protected void paintComponent(Graphics g){
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setColor(AppTheme.BG_DARK);
@@ -124,11 +124,11 @@ public class LoginFrame extends JFrame {
         SwingUtilities.invokeLater(() -> txtUsername.requestFocus());
     }
 
-    private void doLogin() {
+    private void doLogin(){
         String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword());
 
-        if (username.isEmpty() || password.isEmpty()) {
+        if (username.isEmpty() || password.isEmpty()){
             lblStatus.setForeground(AppTheme.ACCENT_RED);
             lblStatus.setText("Username dan password wajib diisi!");
             return;
@@ -138,34 +138,35 @@ public class LoginFrame extends JFrame {
         lblStatus.setForeground(AppTheme.ACCENT_YELLOW);
         lblStatus.setText("Memeriksa...");
 
-        SwingWorker<User, Void> worker = new SwingWorker<>() {
+        SwingWorker<User, Void> worker = new SwingWorker<>(){
             @Override
-            protected User doInBackground() {
-                // Cek username & password di tabel users (koneksi sudah ada)
+            protected User doInBackground(){
                 return authenticate(username, password);
             }
 
             @Override
-            protected void done() {
-                try {
+            protected void done(){
+                try{
                     User user = get();
-                    if (user != null) {
+                    if (user != null){
                         lblStatus.setForeground(AppTheme.ACCENT_GREEN);
                         lblStatus.setText("Login berhasil! Selamat datang, " + user.getNamaLengkap());
-                        Timer t = new Timer(800, ev -> {
+                        Timer t = new Timer(800, ev ->{
                             dispose();
                             new Panels2(user).setVisible(true);
                         });
                         t.setRepeats(false);
                         t.start();
-                    } else {
+
+                    }else{
                         lblStatus.setForeground(AppTheme.ACCENT_RED);
                         lblStatus.setText("Username atau password salah!");
                         txtPassword.setText("");
                         txtPassword.requestFocus();
                         btnLogin.setEnabled(true);
                     }
-                } catch (Exception ex) {
+
+                }catch (Exception ex){
                     lblStatus.setForeground(AppTheme.ACCENT_RED);
                     lblStatus.setText("Terjadi kesalahan: " + ex.getMessage());
                     btnLogin.setEnabled(true);
@@ -175,8 +176,7 @@ public class LoginFrame extends JFrame {
         worker.execute();
     }
 
-    // Cek tabel users — koneksi DB sudah tersedia dari initDB()
-    private User authenticate(String username, String password) {
+    private User authenticate(String username, String password){
         String sql = "SELECT id, username, nama_lengkap, role " +
                      "FROM users WHERE username = ? AND password = ? AND aktif = 1";
         try (PreparedStatement ps = DatabaseConnection.getInstance()
@@ -184,8 +184,8 @@ public class LoginFrame extends JFrame {
                                         .prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, password);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
+            try (ResultSet rs = ps.executeQuery()){
+                if (rs.next()){
                     return new User(
                         rs.getInt("id"),
                         rs.getString("username"),
@@ -194,7 +194,7 @@ public class LoginFrame extends JFrame {
                     );
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException e){
             System.err.println("authenticate error: " + e.getMessage());
         }
         return null;
