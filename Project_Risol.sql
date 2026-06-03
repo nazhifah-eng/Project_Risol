@@ -35,17 +35,14 @@ GO
 USE RisolKasir;
 GO
 
--- Cek nama tabel yang ada
 SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE';
 GO
 
--- Cek struktur tabel kategori
 SELECT COLUMN_NAME, DATA_TYPE 
 FROM INFORMATION_SCHEMA.COLUMNS 
 WHERE TABLE_NAME = 'kategori_produk';
 GO
 
--- Cek isi datanya
 SELECT * FROM kategori_produk;
 GO
 
