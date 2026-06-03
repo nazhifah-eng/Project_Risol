@@ -4,32 +4,57 @@ import java.awt.*;
 
 public class AppTheme {
 
-    public static final Color BG_DARK        = new Color(18, 18, 24);
-    public static final Color BG_CARD        = new Color(26, 27, 38);
-    public static final Color BG_SIDEBAR     = new Color(22, 22, 32);
-    public static final Color BG_INPUT       = new Color(35, 36, 52);
-    public static final Color BG_TABLE_ROW   = new Color(30, 31, 45);
-    public static final Color BG_TABLE_ALT   = new Color(34, 35, 52);
+    public static final Color BG_DARK        = new Color(255, 253, 249); 
+    public static final Color BG_CARD        = new Color(255, 255, 255); 
+    public static final Color BG_SIDEBAR     = new Color(255, 250, 240); 
+    public static final Color BG_INPUT       = new Color(255, 244, 232); 
+    public static final Color BG_TABLE_ROW   = new Color(255, 255, 255);
+    public static final Color BG_TABLE_ALT   = new Color(255, 250, 243);
 
-    public static final Color ACCENT_ORANGE  = new Color(255, 120, 40);
-    public static final Color ACCENT_YELLOW  = new Color(255, 195, 60);
-    public static final Color ACCENT_RED     = new Color(255, 75, 75);
-    public static final Color ACCENT_GREEN   = new Color(60, 210, 130);
-    public static final Color ACCENT_BLUE    = new Color(70, 160, 255);
+    public static final Color ACCENT_ORANGE  = new Color(226, 135,  67); 
+    public static final Color ACCENT_YELLOW  = new Color(245, 192, 122); 
+    public static final Color ACCENT_RED     = new Color(204,  72,  72); 
+    public static final Color ACCENT_GREEN   = new Color( 82, 168, 104); 
+    public static final Color ACCENT_BLUE    = new Color( 90, 150, 210); 
 
-    public static final Color TEXT_PRIMARY   = new Color(240, 240, 255);
-    public static final Color TEXT_SECONDARY = new Color(155, 158, 180);
-    public static final Color TEXT_MUTED     = new Color(90, 95, 120);
-    public static final Color BORDER_COLOR   = new Color(50, 52, 75);
-    public static final Color SEPARATOR      = new Color(45, 47, 68);
+    public static final Color TEXT_PRIMARY   = new Color( 74,  62,  61); 
+    public static final Color TEXT_SECONDARY = new Color(122, 106, 104); 
+    public static final Color TEXT_MUTED     = new Color(176, 160, 158); 
+    public static final Color BORDER_COLOR   = new Color(234, 224, 212); 
+    public static final Color SEPARATOR      = new Color(240, 232, 220);
 
-    public static final Font FONT_TITLE    = new Font("Segoe UI", Font.BOLD, 20);
-    public static final Font FONT_SUBTITLE = new Font("Segoe UI", Font.BOLD, 14);
-    public static final Font FONT_BODY     = new Font("Segoe UI", Font.PLAIN, 13);
-    public static final Font FONT_SMALL    = new Font("Segoe UI", Font.PLAIN, 11);
-    public static final Font FONT_MONO     = new Font("Consolas", Font.BOLD, 13);
-    public static final Font FONT_PRICE    = new Font("Segoe UI", Font.BOLD, 18);
-    public static final Font FONT_HUGE     = new Font("Segoe UI", Font.BOLD, 28);
+static {
+    loadFonts();
+}
+
+private static void loadFonts() {
+    try {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        
+        Font nunito = Font.createFont(Font.TRUETYPE_FONT,
+            AppTheme.class.getResourceAsStream("/fonts/Nunito-Regular.ttf"));
+        Font nunitoBold = Font.createFont(Font.TRUETYPE_FONT,
+            AppTheme.class.getResourceAsStream("/fonts/Nunito-Bold.ttf"));
+        Font playfair = Font.createFont(Font.TRUETYPE_FONT,
+            AppTheme.class.getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"));
+        
+        ge.registerFont(nunito);
+        ge.registerFont(nunitoBold);
+        ge.registerFont(playfair);
+        
+        System.out.println("✓ Font loaded successfully");
+    } catch (Exception e) {
+        System.err.println("Font load failed, using fallback: " + e.getMessage());
+    }
+}
+
+public static final Font FONT_TITLE    = new Font("Playfair Display", Font.BOLD,  20);
+public static final Font FONT_SUBTITLE = new Font("Nunito",           Font.BOLD,  14);
+public static final Font FONT_BODY     = new Font("Nunito",           Font.PLAIN, 13);
+public static final Font FONT_SMALL    = new Font("Nunito",           Font.PLAIN, 11);
+public static final Font FONT_MONO     = new Font("Consolas",         Font.BOLD,  13);
+public static final Font FONT_PRICE    = new Font("Playfair Display", Font.BOLD,  18);
+public static final Font FONT_HUGE     = new Font("Playfair Display", Font.BOLD,  28);
 
     public static void applyTheme() {
         try {
@@ -43,14 +68,22 @@ public class AppTheme {
         UIManager.put("Table.foreground",             TEXT_PRIMARY);
         UIManager.put("Table.gridColor",              BORDER_COLOR);
         UIManager.put("TableHeader.background",       BG_SIDEBAR);
-        UIManager.put("TableHeader.foreground",       ACCENT_ORANGE);
+        UIManager.put("TableHeader.foreground",       new Color(181, 98, 42));
         UIManager.put("ScrollPane.background",        BG_CARD);
-        UIManager.put("ScrollBar.thumb",              new Color(60, 62, 88));
+        UIManager.put("ScrollBar.thumb",              new Color(220, 200, 180));
         UIManager.put("ScrollBar.track",              BG_CARD);
         UIManager.put("OptionPane.background",        BG_CARD);
         UIManager.put("OptionPane.messageForeground", TEXT_PRIMARY);
+        UIManager.put("Button.background",            BG_CARD);
+        UIManager.put("Button.foreground",            TEXT_PRIMARY);
+        UIManager.put("TextField.background",         BG_INPUT);
+        UIManager.put("TextField.foreground",         TEXT_PRIMARY);
+        UIManager.put("ComboBox.background",          BG_INPUT);
+        UIManager.put("ComboBox.foreground",          TEXT_PRIMARY);
+        UIManager.put("Label.foreground",             TEXT_PRIMARY);
     }
 
+    // ── Tombol solid ─────────────────────────────────────────────────────────
     public static JButton makeButton(String text, Color color) {
         JButton btn = new JButton(text) {
             @Override
@@ -58,18 +91,14 @@ public class AppTheme {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                     RenderingHints.VALUE_ANTIALIAS_ON);
-                if (getModel().isPressed()) {
-                    g2.setColor(color.darker());
-                } else if (getModel().isRollover()) {
-                    g2.setColor(color.brighter());
-                } else {
-                    g2.setColor(color);
-                }
+                Color bg = getModel().isPressed()  ? color.darker()   :
+                           getModel().isRollover() ? color.brighter() : color;
+                g2.setColor(bg);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
                 g2.setColor(Color.WHITE);
                 g2.setFont(FONT_SUBTITLE);
                 FontMetrics fm = g2.getFontMetrics();
-                int x = (getWidth() - fm.stringWidth(getText())) / 2;
+                int x = (getWidth()  - fm.stringWidth(getText())) / 2;
                 int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
                 g2.drawString(getText(), x, y);
                 g2.dispose();
@@ -83,6 +112,7 @@ public class AppTheme {
         return btn;
     }
 
+    // ── Tombol outline ────────────────────────────────────────────────────────
     public static JButton makeOutlineButton(String text, Color color) {
         JButton btn = new JButton(text) {
             @Override
@@ -91,8 +121,8 @@ public class AppTheme {
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                     RenderingHints.VALUE_ANTIALIAS_ON);
                 Color bg = getModel().isRollover()
-                    ? new Color(color.getRed(), color.getGreen(), color.getBlue(), 40)
-                    : new Color(color.getRed(), color.getGreen(), color.getBlue(), 15);
+                    ? new Color(color.getRed(), color.getGreen(), color.getBlue(), 35)
+                    : new Color(color.getRed(), color.getGreen(), color.getBlue(), 12);
                 g2.setColor(bg);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
                 g2.setColor(color);
@@ -100,7 +130,7 @@ public class AppTheme {
                 g2.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, 10, 10);
                 g2.setFont(FONT_BODY);
                 FontMetrics fm = g2.getFontMetrics();
-                int x = (getWidth() - fm.stringWidth(getText())) / 2;
+                int x = (getWidth()  - fm.stringWidth(getText())) / 2;
                 int y = (getHeight() + fm.getAscent() - fm.getDescent()) / 2;
                 g2.setColor(color);
                 g2.drawString(getText(), x, y);
@@ -115,6 +145,7 @@ public class AppTheme {
         return btn;
     }
 
+    // ── Input fields ──────────────────────────────────────────────────────────
     public static JTextField makeTextField(int columns) {
         JTextField field = new JTextField(columns);
         field.setBackground(BG_INPUT);
@@ -144,6 +175,7 @@ public class AppTheme {
         return lbl;
     }
 
+    // ── Card dengan rounded corner ────────────────────────────────────────────
     public static JPanel makeCard(int radius) {
         JPanel panel = new JPanel() {
             @Override
@@ -163,11 +195,12 @@ public class AppTheme {
         return panel;
     }
 
+    // ── Warna status ──────────────────────────────────────────────────────────
     public static Color statusColor(String status) {
         if (status == null) return TEXT_MUTED;
         switch (status.toLowerCase()) {
             case "lunas":   return ACCENT_GREEN;
-            case "pending": return ACCENT_YELLOW;
+            case "pending": return new Color(226, 135, 67);
             case "batal":   return ACCENT_RED;
             default:        return TEXT_SECONDARY;
         }
@@ -177,8 +210,8 @@ public class AppTheme {
         if (metode == null) return TEXT_SECONDARY;
         switch (metode.toLowerCase()) {
             case "qris":     return ACCENT_BLUE;
-            case "transfer": return new Color(150, 100, 255);
-            case "kartu":    return new Color(255, 160, 60);
+            case "transfer": return new Color(150, 100, 200);
+            case "kartu":    return new Color(226, 135,  67);
             default:         return ACCENT_GREEN;
         }
     }

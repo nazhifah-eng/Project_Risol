@@ -2,6 +2,7 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 public class ProdukDAO {
 
@@ -9,6 +10,9 @@ public class ProdukDAO {
         return DatabaseConnection.getInstance().getConnection();
     }
 
+    // ═══════════════════════════════════════════════════════════════════════
+    // KATEGORI
+    // ═══════════════════════════════════════════════════════════════════════
     public List<KategoriProduk> getAllKategori() {
         List<KategoriProduk> list = new ArrayList<>();
         String sql = "SELECT id, nama, aktif FROM KategoriProduk WHERE aktif = 1 ORDER BY nama";
@@ -47,18 +51,19 @@ public class ProdukDAO {
         }
     }
 
-
+    // ═══════════════════════════════════════════════════════════════════════
+    // PRODUK — READ
+    // ═══════════════════════════════════════════════════════════════════════
     public List<Produk> getAllProduk() {
         List<Produk> list = new ArrayList<>();
-        String sql = "SELECT p.id, p.kode, p.nama, p.kategori_id, k.nama AS kategori_nama, " +
-                     "p.harga, p.stok, p.satuan, p.deskripsi, p.aktif " +
-                     "FROM Produk p LEFT JOIN KategoriProduk k ON p.kategori_id = k.id " +
+        String sql = "SELECT p.id, p.kode, p.nama, p.kategori_id, " +
+                     "k.nama AS kategori_nama, p.harga, p.stok, p.deskripsi, p.aktif " +
+                     "FROM produk p " +
+                     "LEFT JOIN KategoriProduk k ON p.kategori_id = k.id " +
                      "WHERE p.aktif = 1 ORDER BY p.nama";
         try (PreparedStatement ps = getConn().prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                list.add(mapRow(rs));
-            }
+            while (rs.next()) list.add(mapRow(rs));
         } catch (SQLException e) {
             System.err.println("getAllProduk error: " + e.getMessage());
         }
@@ -67,10 +72,12 @@ public class ProdukDAO {
 
     public List<Produk> cariProduk(String keyword) {
         List<Produk> list = new ArrayList<>();
-        String sql = "SELECT p.id, p.kode, p.nama, p.kategori_id, k.nama AS kategori_nama, " +
-                     "p.harga, p.stok, p.satuan, p.deskripsi, p.aktif " +
-                     "FROM Produk p LEFT JOIN KategoriProduk k ON p.kategori_id = k.id " +
-                     "WHERE p.aktif = 1 AND (p.nama LIKE ? OR p.kode LIKE ?) ORDER BY p.nama";
+        String sql = "SELECT p.id, p.kode, p.nama, p.kategori_id, " +
+                     "k.nama AS kategori_nama, p.harga, p.stok, p.deskripsi, p.aktif " +
+                     "FROM produk p " +
+                     "LEFT JOIN KategoriProduk k ON p.kategori_id = k.id " +
+                     "WHERE p.aktif = 1 AND (p.nama LIKE ? OR p.kode LIKE ?) " +
+                     "ORDER BY p.nama";
         try (PreparedStatement ps = getConn().prepareStatement(sql)) {
             String kw = "%" + keyword + "%";
             ps.setString(1, kw);
@@ -85,9 +92,10 @@ public class ProdukDAO {
     }
 
     public Produk getProdukById(int id) {
-        String sql = "SELECT p.id, p.kode, p.nama, p.kategori_id, k.nama AS kategori_nama, " +
-                     "p.harga, p.stok, p.satuan, p.deskripsi, p.aktif " +
-                     "FROM Produk p LEFT JOIN KategoriProduk k ON p.kategori_id = k.id " +
+        String sql = "SELECT p.id, p.kode, p.nama, p.kategori_id, " +
+                     "k.nama AS kategori_nama, p.harga, p.stok, p.deskripsi, p.aktif " +
+                     "FROM produk p " +
+                     "LEFT JOIN KategoriProduk k ON p.kategori_id = k.id " +
                      "WHERE p.id = ?";
         try (PreparedStatement ps = getConn().prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -100,45 +108,54 @@ public class ProdukDAO {
         return null;
     }
 
+    // ═══════════════════════════════════════════════════════════════════════
+    // PRODUK — WRITE
+    // ═══════════════════════════════════════════════════════════════════════
     public boolean tambahProduk(Produk p) {
-        String sql = "INSERT INTO Produk (kode, nama, kategori_id, harga, stok, satuan, deskripsi, aktif) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, 1)";
+        String sql = "INSERT INTO produk (kode, nama, kategori_id, harga, stok, deskripsi, aktif) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, 1)";
         try (PreparedStatement ps = getConn().prepareStatement(sql)) {
             ps.setString(1, p.getKode());
             ps.setString(2, p.getNama());
             ps.setInt(3, p.getKategoriId());
             ps.setBigDecimal(4, p.getHarga());
             ps.setInt(5, p.getStok());
-            ps.setString(6, p.getSatuan());
-            ps.setString(7, p.getDeskripsi());
+            ps.setString(6, p.getDeskripsi());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("tambahProduk error: " + e.getMessage());
+            javax.swing.SwingUtilities.invokeLater(() ->
+                JOptionPane.showMessageDialog(null,
+                    "SQL Error: " + e.getMessage(), "Debug",
+                    JOptionPane.ERROR_MESSAGE));
             return false;
         }
     }
 
     public boolean updateProduk(Produk p) {
-        String sql = "UPDATE Produk SET kode=?, nama=?, kategori_id=?, harga=?, " +
-                     "stok=?, satuan=?, deskripsi=? WHERE id=?";
+        String sql = "UPDATE produk SET kode=?, nama=?, kategori_id=?, " +
+                     "harga=?, stok=?, deskripsi=? WHERE id=?";
         try (PreparedStatement ps = getConn().prepareStatement(sql)) {
             ps.setString(1, p.getKode());
             ps.setString(2, p.getNama());
             ps.setInt(3, p.getKategoriId());
             ps.setBigDecimal(4, p.getHarga());
             ps.setInt(5, p.getStok());
-            ps.setString(6, p.getSatuan());
-            ps.setString(7, p.getDeskripsi());
-            ps.setInt(8, p.getId());
+            ps.setString(6, p.getDeskripsi());
+            ps.setInt(7, p.getId());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("updateProduk error: " + e.getMessage());
+            javax.swing.SwingUtilities.invokeLater(() ->
+                JOptionPane.showMessageDialog(null,
+                    "SQL Error: " + e.getMessage(), "Debug",
+                    JOptionPane.ERROR_MESSAGE));
             return false;
         }
     }
 
     public boolean hapusProduk(int id) {
-        String sql = "UPDATE Produk SET aktif = 0 WHERE id = ?";
+        String sql = "UPDATE produk SET aktif = 0 WHERE id = ?";
         try (PreparedStatement ps = getConn().prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
@@ -149,7 +166,7 @@ public class ProdukDAO {
     }
 
     public boolean updateStok(int produkId, int jumlah) {
-        String sql = "UPDATE Produk SET stok = stok + ? WHERE id = ?";
+        String sql = "UPDATE produk SET stok = stok + ? WHERE id = ?";
         try (PreparedStatement ps = getConn().prepareStatement(sql)) {
             ps.setInt(1, jumlah);
             ps.setInt(2, produkId);
@@ -160,6 +177,9 @@ public class ProdukDAO {
         }
     }
 
+    // ═══════════════════════════════════════════════════════════════════════
+    // HELPER
+    // ═══════════════════════════════════════════════════════════════════════
     private Produk mapRow(ResultSet rs) throws SQLException {
         Produk p = new Produk();
         p.setId(rs.getInt("id"));
@@ -169,7 +189,6 @@ public class ProdukDAO {
         p.setKategoriNama(rs.getString("kategori_nama"));
         p.setHarga(rs.getBigDecimal("harga"));
         p.setStok(rs.getInt("stok"));
-        p.setSatuan(rs.getString("satuan"));
         p.setDeskripsi(rs.getString("deskripsi"));
         p.setAktif(rs.getBoolean("aktif"));
         return p;
