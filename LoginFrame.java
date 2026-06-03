@@ -5,10 +5,10 @@ import java.awt.event.*;
 import java.sql.*;
 
 public class LoginFrame extends JFrame {
-    private JTextField txtUsername;
+    private JTextField     txtUsername;
     private JPasswordField txtPassword;
-    private JButton btnLogin;
-    private JLabel lblStatus;
+    private JButton        btnLogin;
+    private JLabel         lblStatus;
 
     public LoginFrame() {
         setTitle("Larisole — Login");
@@ -16,7 +16,24 @@ public class LoginFrame extends JFrame {
         setSize(420, 520);
         setLocationRelativeTo(null);
         setResizable(false);
+
+        // Koneksi ke database dilakukan saat app pertama dibuka
+        initDB();
         initComponents();
+    }
+
+    private void initDB() {
+        try {
+            DatabaseConnection.getInstance();
+        } catch (RuntimeException e) {
+            JOptionPane.showMessageDialog(
+                null,
+                "Tidak dapat terhubung ke database.\nPastikan SQL Server sudah berjalan.\n\n" + e.getMessage(),
+                "Koneksi Gagal",
+                JOptionPane.ERROR_MESSAGE
+            );
+            System.exit(1);
+        }
     }
 
     private void initComponents() {
@@ -39,35 +56,35 @@ public class LoginFrame extends JFrame {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 20, 8, 20);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
+        gbc.fill   = GridBagConstraints.HORIZONTAL;
+        gbc.gridx  = 0;
 
         JLabel lblTitle = new JLabel("LARISOLE", SwingConstants.CENTER);
         lblTitle.setFont(AppTheme.FONT_HUGE);
         lblTitle.setForeground(AppTheme.ACCENT_ORANGE);
-        gbc.gridy = 0;
+        gbc.gridy  = 0;
         gbc.insets = new Insets(28, 20, 4, 20);
         card.add(lblTitle, gbc);
 
         JLabel lblSub = new JLabel("Sistem Kasir Modern", SwingConstants.CENTER);
         lblSub.setFont(AppTheme.FONT_SMALL);
         lblSub.setForeground(AppTheme.TEXT_MUTED);
-        gbc.gridy = 1;
+        gbc.gridy  = 1;
         gbc.insets = new Insets(0, 20, 20, 20);
         card.add(lblSub, gbc);
 
         JLabel lblUser = AppTheme.makeLabel("Username");
-        gbc.gridy = 2;
+        gbc.gridy  = 2;
         gbc.insets = new Insets(8, 20, 2, 20);
         card.add(lblUser, gbc);
 
         txtUsername = AppTheme.makeTextField(20);
-        gbc.gridy = 3;
+        gbc.gridy  = 3;
         gbc.insets = new Insets(0, 20, 8, 20);
         card.add(txtUsername, gbc);
 
         JLabel lblPass = AppTheme.makeLabel("Password");
-        gbc.gridy = 4;
+        gbc.gridy  = 4;
         gbc.insets = new Insets(8, 20, 2, 20);
         card.add(lblPass, gbc);
 
@@ -80,20 +97,20 @@ public class LoginFrame extends JFrame {
             BorderFactory.createLineBorder(AppTheme.BORDER_COLOR, 1),
             BorderFactory.createEmptyBorder(6, 10, 6, 10)
         ));
-        gbc.gridy = 5;
+        gbc.gridy  = 5;
         gbc.insets = new Insets(0, 20, 16, 20);
         card.add(txtPassword, gbc);
 
         lblStatus = new JLabel(" ", SwingConstants.CENTER);
         lblStatus.setFont(AppTheme.FONT_SMALL);
         lblStatus.setForeground(AppTheme.ACCENT_RED);
-        gbc.gridy = 6;
+        gbc.gridy  = 6;
         gbc.insets = new Insets(0, 20, 8, 20);
         card.add(lblStatus, gbc);
 
         btnLogin = AppTheme.makeButton("Login", AppTheme.ACCENT_ORANGE);
         btnLogin.setPreferredSize(new Dimension(280, 42));
-        gbc.gridy = 7;
+        gbc.gridy  = 7;
         gbc.insets = new Insets(0, 20, 24, 20);
         card.add(btnLogin, gbc);
 
@@ -112,6 +129,7 @@ public class LoginFrame extends JFrame {
         String password = new String(txtPassword.getPassword());
 
         if (username.isEmpty() || password.isEmpty()) {
+            lblStatus.setForeground(AppTheme.ACCENT_RED);
             lblStatus.setText("Username dan password wajib diisi!");
             return;
         }
@@ -123,6 +141,7 @@ public class LoginFrame extends JFrame {
         SwingWorker<User, Void> worker = new SwingWorker<>() {
             @Override
             protected User doInBackground() {
+                // Cek username & password di tabel users (koneksi sudah ada)
                 return authenticate(username, password);
             }
 
@@ -148,7 +167,7 @@ public class LoginFrame extends JFrame {
                     }
                 } catch (Exception ex) {
                     lblStatus.setForeground(AppTheme.ACCENT_RED);
-                    lblStatus.setText("Gagal terhubung ke database!");
+                    lblStatus.setText("Terjadi kesalahan: " + ex.getMessage());
                     btnLogin.setEnabled(true);
                 }
             }
@@ -156,11 +175,13 @@ public class LoginFrame extends JFrame {
         worker.execute();
     }
 
+    // Cek tabel users — koneksi DB sudah tersedia dari initDB()
     private User authenticate(String username, String password) {
-        String sql = "SELECT id, username, nama_lengkap, role, aktif " +
-                     "FROM Users WHERE username = ? AND password = ? AND aktif = 1";
+        String sql = "SELECT id, username, nama_lengkap, role " +
+                     "FROM users WHERE username = ? AND password = ? AND aktif = 1";
         try (PreparedStatement ps = DatabaseConnection.getInstance()
-                                        .getConnection().prepareStatement(sql)) {
+                                        .getConnection()
+                                        .prepareStatement(sql)) {
             ps.setString(1, username);
             ps.setString(2, password);
             try (ResultSet rs = ps.executeQuery()) {

@@ -9,7 +9,7 @@ public class DatabaseConnection {
     private String port     = "1433";
     private String database = "RisolKasir";
     private String username = "sa";
-    private String password = "123";
+    private String password = "Risol@2024";
 
     private DatabaseConnection() {
         loadProperties();
@@ -43,7 +43,7 @@ public class DatabaseConnection {
             connection = DriverManager.getConnection(url, username, password);
             System.out.println("Koneksi database berhasil!");
         } catch (ClassNotFoundException e) {
-            System.err.println("Driver SQL Server tidak ditemukan: " + e.getMessage());
+            System.err.println("Driver tidak ditemukan: " + e.getMessage());
             throw new RuntimeException("Driver tidak ditemukan", e);
         } catch (SQLException e) {
             System.err.println("Koneksi database gagal: " + e.getMessage());
@@ -51,9 +51,15 @@ public class DatabaseConnection {
         }
     }
 
+    // Dipanggil sekali saat app pertama dibuka
     public static synchronized DatabaseConnection getInstance() {
         if (instance == null) {
-            instance = new DatabaseConnection();
+            try {
+                instance = new DatabaseConnection();
+            } catch (RuntimeException e) {
+                instance = null;
+                throw e;
+            }
         }
         return instance;
     }
