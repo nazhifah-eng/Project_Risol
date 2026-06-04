@@ -10,9 +10,6 @@ public class TransaksiDAO {
         return DatabaseConnection.getInstance().getConnection();
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // SIMPAN TRANSAKSI + DETAIL (dalam satu transaction/rollback)
-    // ═══════════════════════════════════════════════════════════════════════
     public boolean simpanTransaksi(Transaksi t, List<ItemKeranjang> keranjang) {
         String sqlT = "INSERT INTO transaksi " +
                       "(no_transaksi, tanggal, customer, kasir_id, metode_bayar, " +
@@ -41,7 +38,6 @@ public class TransaksiDAO {
                 transaksiId = keys.getInt(1);
             }
 
-            // Insert detail
             String sqlD = "INSERT INTO DetailTransaksi " +
                           "(transaksi_id, produk_id, nama_produk, harga, qty, subtotal) " +
                           "VALUES (?, ?, ?, ?, ?, ?)";
@@ -58,7 +54,6 @@ public class TransaksiDAO {
                 pd.executeBatch();
             }
 
-            // Kurangi stok produk
             ProdukDAO produkDAO = new ProdukDAO();
             for (ItemKeranjang item : keranjang) {
                 produkDAO.updateStok(item.getProdukId(), -item.getQty());
@@ -80,9 +75,6 @@ public class TransaksiDAO {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // GET ALL TRANSAKSI (untuk Riwayat)
-    // ═══════════════════════════════════════════════════════════════════════
     public List<Transaksi> getAllTransaksi() {
         List<Transaksi> list = new ArrayList<>();
         String sql = "SELECT id, no_transaksi, tanggal, customer, kasir_id, " +
@@ -97,9 +89,6 @@ public class TransaksiDAO {
         return list;
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // GET DETAIL BY TRANSAKSI ID
-    // ═══════════════════════════════════════════════════════════════════════
     public List<DetailTransaksi> getDetailByTransaksiId(int transaksiId) {
         List<DetailTransaksi> list = new ArrayList<>();
         String sql = "SELECT id, transaksi_id, produk_id, nama_produk, harga, qty, subtotal " +
@@ -125,9 +114,6 @@ public class TransaksiDAO {
         return list;
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // HELPER
-    // ═══════════════════════════════════════════════════════════════════════
     private Transaksi mapRow(ResultSet rs) throws SQLException {
         Transaksi t = new Transaksi();
         t.setId(rs.getInt("id"));

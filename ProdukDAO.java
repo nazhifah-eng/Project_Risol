@@ -177,9 +177,6 @@ public class ProdukDAO {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // HELPER
-    // ═══════════════════════════════════════════════════════════════════════
     private Produk mapRow(ResultSet rs) throws SQLException {
         Produk p = new Produk();
         p.setId(rs.getInt("id"));

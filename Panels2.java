@@ -679,7 +679,6 @@ private void prosesPayment() {
         .map(ItemKeranjang::getSubtotal)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    // Dialog pembayaran
     JDialog dlg = new JDialog(this, "💳  Proses Pembayaran", true);
     dlg.setSize(360, 300);
     dlg.setLocationRelativeTo(this);
@@ -699,7 +698,6 @@ private void prosesPayment() {
     lblTotal.setForeground(new Color(181, 98, 42));
     g.gridy = 0; panel.add(lblTotal, g);
 
-    // Metode bayar
     g.gridy = 1; panel.add(AppTheme.makeLabel("Metode Pembayaran"), g);
     JComboBox<String> cmbMetode = AppTheme.makeComboBox();
     cmbMetode.addItem("Tunai");
@@ -707,7 +705,6 @@ private void prosesPayment() {
     cmbMetode.addItem("Transfer");
     g.gridy = 2; panel.add(cmbMetode, g);
 
-    // Jumlah dibayar
     g.gridy = 3; panel.add(AppTheme.makeLabel("Jumlah Dibayar (Rp)"), g);
     JTextField txtDibayar = AppTheme.makeTextField(14);
     txtDibayar.setText(total.toPlainString());
@@ -718,7 +715,6 @@ private void prosesPayment() {
     lblKembalian.setForeground(AppTheme.ACCENT_GREEN);
     g.gridy = 5; panel.add(lblKembalian, g);
 
-    // Hitung kembalian realtime
     txtDibayar.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
         void update() {
             try {
@@ -786,7 +782,6 @@ private void prosesPayment() {
     dlg.setVisible(true);
 }
 
-    // Custom renderer untuk cart list
     private class CartCellRenderer implements ListCellRenderer<ItemKeranjang> {
         @Override
         public Component getListCellRendererComponent(JList<? extends ItemKeranjang> list,
@@ -799,7 +794,6 @@ private void prosesPayment() {
                 BorderFactory.createEmptyBorder(8, 14, 8, 14)
             ));
 
-            // Ikon
             JLabel ico = new JLabel("🍱");
             ico.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 22));
             ico.setPreferredSize(new Dimension(36, 36));
@@ -811,7 +805,6 @@ private void prosesPayment() {
             icoWrap.add(ico, BorderLayout.CENTER);
             cell.add(icoWrap, BorderLayout.WEST);
 
-            // Info
             JPanel info = new JPanel(new GridLayout(2, 1, 0, 2));
             info.setOpaque(false);
             JLabel nama = new JLabel(item.getNamaProduk());
@@ -824,7 +817,6 @@ private void prosesPayment() {
             info.add(nama); info.add(price);
             cell.add(info, BorderLayout.CENTER);
 
-            // Subtotal + kontrol qty
             JPanel right = new JPanel();
             right.setOpaque(false);
             right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
@@ -889,14 +881,10 @@ private void prosesPayment() {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // PRODUK PANEL (CRUD)
-    // ═══════════════════════════════════════════════════════════════════════
     private JPanel buildProdukPanel() {
         JPanel panel = new JPanel(new BorderLayout(0, 0));
         panel.setBackground(AppTheme.BG_DARK);
 
-        // ── Header ──────────────────────────────────────────────────────────
         JPanel header = new JPanel(new BorderLayout(10, 0));
         header.setBackground(AppTheme.BG_CARD);
         header.setBorder(BorderFactory.createCompoundBorder(
@@ -909,7 +897,6 @@ private void prosesPayment() {
         title.setForeground(AppTheme.TEXT_PRIMARY);
         header.add(title, BorderLayout.WEST);
 
-        // Tombol CRUD
         JPanel btnBar = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         btnBar.setOpaque(false);
 
@@ -938,7 +925,6 @@ private void prosesPayment() {
         header.add(btnBar, BorderLayout.EAST);
         panel.add(header, BorderLayout.NORTH);
 
-        // ── Tabel ───────────────────────────────────────────────────────────
         String[] cols = {"ID", "Kode", "Nama Produk", "Kategori", "Harga", "Stok", "Satuan", "Aktif"};
         produkTableModel = new DefaultTableModel(cols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
@@ -959,7 +945,6 @@ private void prosesPayment() {
         scroll.getViewport().setBackground(AppTheme.BG_TABLE_ROW);
         panel.add(scroll, BorderLayout.CENTER);
 
-        // Status bar bawah
         JPanel statusBar = new JPanel(new BorderLayout());
         statusBar.setBackground(AppTheme.BG_SIDEBAR);
         statusBar.setBorder(BorderFactory.createCompoundBorder(
@@ -972,7 +957,6 @@ private void prosesPayment() {
         statusBar.add(lblStatus, BorderLayout.WEST);
         panel.add(statusBar, BorderLayout.SOUTH);
 
-        // ── Event listeners ─────────────────────────────────────────────────
         btnRefresh.addActionListener(e -> loadProdukTable(produkTableModel, null));
         btnCari.addActionListener(e    -> loadProdukTable(produkTableModel, txtCari.getText()));
         txtCari.addActionListener(e    -> loadProdukTable(produkTableModel, txtCari.getText()));
@@ -1011,7 +995,6 @@ private void prosesPayment() {
             }
         });
 
-        // Double-click untuk detail
         table.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2 && table.getSelectedRow() >= 0) {
@@ -1047,7 +1030,6 @@ private void prosesPayment() {
         }
     }
 
-    // ── Dialog Tambah/Edit Produk ────────────────────────────────────────
     private void showProdukDialog(Produk existing, DefaultTableModel model) {
         boolean isEdit = existing != null;
         JDialog dialog = new JDialog(this,
@@ -1056,11 +1038,9 @@ private void prosesPayment() {
         dialog.setLocationRelativeTo(this);
         dialog.setResizable(false);
 
-        // Panel utama
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(AppTheme.BG_CARD);
 
-        // Header dialog
         JPanel dlgHdr = new JPanel(new BorderLayout());
         dlgHdr.setBackground(isEdit ? new Color(245, 245, 255) : new Color(240, 255, 245));
         dlgHdr.setBorder(BorderFactory.createCompoundBorder(
@@ -1073,7 +1053,6 @@ private void prosesPayment() {
         dlgHdr.add(dlgTitle);
         panel.add(dlgHdr, BorderLayout.NORTH);
 
-        // Form
         JPanel form = new JPanel(new GridBagLayout());
         form.setBackground(AppTheme.BG_CARD);
         form.setBorder(BorderFactory.createEmptyBorder(16, 22, 8, 22));
@@ -1133,7 +1112,6 @@ private void prosesPayment() {
         }
         panel.add(form, BorderLayout.CENTER);
 
-        // Footer tombol
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         footer.setBackground(AppTheme.BG_SIDEBAR);
         footer.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, AppTheme.BORDER_COLOR));
@@ -1180,7 +1158,7 @@ private void prosesPayment() {
                     ok ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
                 if (ok) {
                     loadProdukTable(model, null);
-                    loadAllProdukKasir(); // refresh juga di panel kasir
+                    loadAllProdukKasir(); 
                     dialog.dispose();
                 }
             } catch (NumberFormatException ex) {
@@ -1194,14 +1172,10 @@ private void prosesPayment() {
         dialog.setVisible(true);
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // RIWAYAT TRANSAKSI PANEL
-    // ═══════════════════════════════════════════════════════════════════════
 private JPanel buildRiwayatPanel() {
     JPanel panel = new JPanel(new BorderLayout(0, 0));
     panel.setBackground(AppTheme.BG_DARK);
 
-    // Header
     JPanel header = new JPanel(new BorderLayout(10, 0));
     header.setBackground(AppTheme.BG_CARD);
     header.setBorder(BorderFactory.createCompoundBorder(
@@ -1219,7 +1193,6 @@ private JPanel buildRiwayatPanel() {
     header.add(btnWrap, BorderLayout.EAST);
     panel.add(header, BorderLayout.NORTH);
 
-    // Tabel
     String[] cols = {"No Transaksi", "Tanggal", "Kasir", 
                      "Total", "Metode", "Status"};
     DefaultTableModel riwayatModel = new DefaultTableModel(cols, 0) {
@@ -1239,7 +1212,6 @@ private JPanel buildRiwayatPanel() {
     scroll.getViewport().setBackground(AppTheme.BG_TABLE_ROW);
     panel.add(scroll, BorderLayout.CENTER);
 
-    // Load data
     Runnable loadData = () -> {
         riwayatModel.setRowCount(0);
         NumberFormat rupiah = NumberFormat.getInstance(new java.util.Locale("id","ID"));
@@ -1261,9 +1233,6 @@ private JPanel buildRiwayatPanel() {
     return panel;
 }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // STYLING TABLE
-    // ═══════════════════════════════════════════════════════════════════════
     private void styleTable(JTable table) {
         table.setBackground(AppTheme.BG_TABLE_ROW);
         table.setForeground(AppTheme.TEXT_PRIMARY);
@@ -1280,7 +1249,6 @@ private JPanel buildRiwayatPanel() {
         table.getTableHeader().setPreferredSize(new Dimension(0, 36));
         table.setFillsViewportHeight(true);
 
-        // Alternating row colors
         table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable t, Object val,
@@ -1296,9 +1264,6 @@ private JPanel buildRiwayatPanel() {
         });
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // WrapLayout — untuk product grid agar auto-wrap
-    // ═══════════════════════════════════════════════════════════════════════
     private static class WrapLayout extends FlowLayout {
         public WrapLayout(int align, int hgap, int vgap) { super(align, hgap, vgap); }
 
