@@ -83,7 +83,7 @@ public static final Font FONT_HUGE     = new Font("Playfair Display", Font.BOLD,
         UIManager.put("Label.foreground",             TEXT_PRIMARY);
     }
 
-    // ── Tombol solid ─────────────────────────────────────────────────────────
+  
     public static JButton makeButton(String text, Color color) {
         JButton btn = new JButton(text) {
             @Override
@@ -112,7 +112,6 @@ public static final Font FONT_HUGE     = new Font("Playfair Display", Font.BOLD,
         return btn;
     }
 
-    // ── Tombol outline ────────────────────────────────────────────────────────
     public static JButton makeOutlineButton(String text, Color color) {
         JButton btn = new JButton(text) {
             @Override
@@ -145,7 +144,6 @@ public static final Font FONT_HUGE     = new Font("Playfair Display", Font.BOLD,
         return btn;
     }
 
-    // ── Input fields ──────────────────────────────────────────────────────────
     public static JTextField makeTextField(int columns) {
         JTextField field = new JTextField(columns);
         field.setBackground(BG_INPUT);
@@ -175,7 +173,6 @@ public static final Font FONT_HUGE     = new Font("Playfair Display", Font.BOLD,
         return lbl;
     }
 
-    // ── Card dengan rounded corner ────────────────────────────────────────────
     public static JPanel makeCard(int radius) {
         JPanel panel = new JPanel() {
             @Override
@@ -194,8 +191,6 @@ public static final Font FONT_HUGE     = new Font("Playfair Display", Font.BOLD,
         panel.setOpaque(false);
         return panel;
     }
-
-    // ── Warna status ──────────────────────────────────────────────────────────
     public static Color statusColor(String status) {
         if (status == null) return TEXT_MUTED;
         switch (status.toLowerCase()) {
