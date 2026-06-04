@@ -10,9 +10,6 @@ public class ProdukDAO {
         return DatabaseConnection.getInstance().getConnection();
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // KATEGORI
-    // ═══════════════════════════════════════════════════════════════════════
     public List<KategoriProduk> getAllKategori() {
         List<KategoriProduk> list = new ArrayList<>();
         String sql = "SELECT id, nama, aktif FROM KategoriProduk WHERE aktif = 1 ORDER BY nama";
@@ -51,9 +48,6 @@ public class ProdukDAO {
         }
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // PRODUK — READ
-    // ═══════════════════════════════════════════════════════════════════════
     public List<Produk> getAllProduk() {
         List<Produk> list = new ArrayList<>();
         String sql = "SELECT p.id, p.kode, p.nama, p.kategori_id, " +
@@ -108,9 +102,6 @@ public class ProdukDAO {
         return null;
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // PRODUK — WRITE
-    // ═══════════════════════════════════════════════════════════════════════
     public boolean tambahProduk(Produk p) {
         String sql = "INSERT INTO produk (kode, nama, kategori_id, harga, stok, deskripsi, aktif) " +
                      "VALUES (?, ?, ?, ?, ?, ?, 1)";
